@@ -6,10 +6,7 @@ Create a new order and order item with selected product or adding product to exi
 * **method**: POST
 
 ### Query Params
--
-request: user_id + product_id ⇒ Order, Order Item
-
-return: Order | Order Item | Product | Product Image | Product Variant
+- No
 ### Request body
 ```json
 {
