@@ -16,7 +16,7 @@ A product list API that return all product or filter product by name
 ### Response body
 ```json
 {
-    products: [
+    "products": [
         {
             "id": 1,
             "name": "POCA SHOE NMD Sneaker Fasion",
