@@ -1,4 +1,4 @@
-package com.yothinix.ecommerce.orders;
+package com.yothinix.ecommerce.orders.repository;
 
 import com.yothinix.ecommerce.orders.entity.Order;
 import org.springframework.data.jpa.repository.JpaRepository;

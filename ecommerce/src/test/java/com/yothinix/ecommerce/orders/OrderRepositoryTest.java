@@ -1,6 +1,7 @@
 package com.yothinix.ecommerce.orders;
 
 import com.yothinix.ecommerce.orders.entity.Order;
+import com.yothinix.ecommerce.orders.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
