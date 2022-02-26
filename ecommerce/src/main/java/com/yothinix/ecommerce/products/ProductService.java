@@ -1,0 +1,18 @@
+package com.yothinix.ecommerce.products;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductService {
+
+    @Autowired
+    ProductRepository productRepository;
+
+    public ProductResponse searchBy(String name) {
+        List<Product> products = productRepository.findProductByNameContains(name);
+        return new ProductResponse(products);
+    }
+}
