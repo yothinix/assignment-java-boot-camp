@@ -1,5 +1,6 @@
 package com.yothinix.ecommerce.orders;
 
+import com.yothinix.ecommerce.orders.entity.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

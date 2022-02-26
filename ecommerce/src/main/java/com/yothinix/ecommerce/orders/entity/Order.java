@@ -1,4 +1,4 @@
-package com.yothinix.ecommerce.orders;
+package com.yothinix.ecommerce.orders.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
