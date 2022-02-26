@@ -1,7 +1,6 @@
 package com.yothinix.ecommerce.products.repository;
 
 import com.yothinix.ecommerce.products.entity.Product;
-import com.yothinix.ecommerce.products.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
