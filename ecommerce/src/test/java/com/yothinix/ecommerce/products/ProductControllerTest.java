@@ -51,7 +51,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void getProductControllerShouldReturnProductTest() {
+    void getProductListControllerShouldReturnProductTest() {
         when(productRepository.findProductByNameContains("Nike")).thenReturn(List.of(product));
 
         ProductListResponse response = testRestTemplate.getForObject("/products?name=Nike", ProductListResponse.class);
@@ -67,7 +67,7 @@ class ProductControllerTest {
     }
 
     @Test
-    void getProductControllerShouldReturnEmptyListWhenProductNotFoundTest() {
+    void getProductListControllerShouldReturnEmptyListWhenProductNotFoundTest() {
         ProductListResponse response = testRestTemplate.getForObject("/products?name=Adidas", ProductListResponse.class);
 
         assertEquals(0, response.getProducts().size());
