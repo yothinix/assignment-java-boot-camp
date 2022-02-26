@@ -1,5 +1,6 @@
 package com.yothinix.ecommerce.products;
 
+import com.yothinix.ecommerce.products.entity.Product;
 import com.yothinix.ecommerce.products.repository.ProductRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,4 +1,4 @@
-package com.yothinix.ecommerce.products;
+package com.yothinix.ecommerce.products.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,12 +13,10 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Product {
+public class ProductImage {
     @Id
     private Integer id;
-    private String name;
-    private String brand;
-    private String category;
-    private String description;
-    private Double price;
+    private Integer productId;
+    private String imagePath;
+    private Boolean isFeatureImage;
 }

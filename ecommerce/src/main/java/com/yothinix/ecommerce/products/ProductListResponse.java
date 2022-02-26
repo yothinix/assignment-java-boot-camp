@@ -1,5 +1,6 @@
 package com.yothinix.ecommerce.products;
 
+import com.yothinix.ecommerce.products.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
