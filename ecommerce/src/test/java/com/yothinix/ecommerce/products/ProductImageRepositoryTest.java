@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.util.Optional;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,15 +28,15 @@ class ProductImageRepositoryTest {
         productImage.setImagePath("/media/example.jpg");
         entityManager.persist(productImage);
 
-        Optional<ProductImage> actual = productImageRepository.findProductImageByProductId(2);
+        List<ProductImage> actual = productImageRepository.findProductImageByProductId(2);
 
-        assertTrue(actual.isPresent());
-        assertEquals("/media/example.jpg", actual.get().getImagePath());
+        assertFalse(actual.isEmpty());
+        assertEquals("/media/example.jpg", actual.get(0).getImagePath());
     }
 
     @Test
     void findProductImageByProductIdWhenProductImageIsNotFoundTest() {
-        Optional<ProductImage> actual = productImageRepository.findProductImageByProductId(10);
+        List<ProductImage> actual = productImageRepository.findProductImageByProductId(10);
 
         assertTrue(actual.isEmpty());
     }
