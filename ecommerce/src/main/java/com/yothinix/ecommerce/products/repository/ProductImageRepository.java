@@ -1,5 +1,6 @@
-package com.yothinix.ecommerce.products;
+package com.yothinix.ecommerce.products.repository;
 
+import com.yothinix.ecommerce.products.ProductImage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

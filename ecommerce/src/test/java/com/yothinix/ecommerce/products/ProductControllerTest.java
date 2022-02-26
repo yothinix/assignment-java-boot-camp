@@ -1,5 +1,6 @@
 package com.yothinix.ecommerce.products;
 
+import com.yothinix.ecommerce.products.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
