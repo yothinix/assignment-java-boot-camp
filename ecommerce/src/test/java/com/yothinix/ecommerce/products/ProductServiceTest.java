@@ -28,7 +28,7 @@ class ProductServiceTest {
         when(productRepository.findProductByNameContains("Adidas"))
                 .thenReturn(List.of(product));
 
-        ProductResponse actual = productService.searchBy("Adidas");
+        ProductListResponse actual = productService.searchBy("Adidas");
 
         assertEquals(1, actual.getProducts().size());
         assertEquals("Adidas", actual.getProducts().get(0).getName());
@@ -39,7 +39,7 @@ class ProductServiceTest {
         when(productRepository.findProductByNameContains("Adidas"))
                 .thenReturn(Collections.emptyList());
 
-        ProductResponse actual = productService.searchBy("Adidas");
+        ProductListResponse actual = productService.searchBy("Adidas");
 
         assertEquals(0, actual.getProducts().size());
     }

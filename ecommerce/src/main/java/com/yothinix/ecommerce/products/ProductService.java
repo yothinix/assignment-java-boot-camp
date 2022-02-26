@@ -11,8 +11,8 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
-    public ProductResponse searchBy(String name) {
+    public ProductListResponse searchBy(String name) {
         List<Product> products = productRepository.findProductByNameContains(name);
-        return new ProductResponse(products);
+        return new ProductListResponse(products);
     }
 }

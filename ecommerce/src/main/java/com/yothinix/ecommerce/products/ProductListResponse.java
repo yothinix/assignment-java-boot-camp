@@ -11,6 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductResponse {
+public class ProductListResponse {
     private List<Product> products;
 }

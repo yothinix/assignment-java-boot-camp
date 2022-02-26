@@ -35,7 +35,7 @@ class ProductControllerTest {
 
     @Test
     void getProductControllerShouldReturnProductTest() {
-        ProductResponse response = testRestTemplate.getForObject("/products?name=Nike", ProductResponse.class);
+        ProductListResponse response = testRestTemplate.getForObject("/products?name=Nike", ProductListResponse.class);
         Product actual = response.getProducts().get(0);
 
         assertEquals(1, response.getProducts().size());
@@ -49,7 +49,7 @@ class ProductControllerTest {
 
     @Test
     void getProductControllerShouldReturnEmptyListWhenProductNotFoundTest() {
-        ProductResponse response = testRestTemplate.getForObject("/products?name=Adidas", ProductResponse.class);
+        ProductListResponse response = testRestTemplate.getForObject("/products?name=Adidas", ProductListResponse.class);
 
         assertEquals(0, response.getProducts().size());
     }

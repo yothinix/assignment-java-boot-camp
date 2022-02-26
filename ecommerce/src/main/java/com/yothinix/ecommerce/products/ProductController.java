@@ -12,7 +12,7 @@ public class ProductController {
     ProductService productService;
 
     @GetMapping("/products")
-    public ProductResponse getProduct(@RequestParam String name) {
+    public ProductListResponse getProduct(@RequestParam String name) {
         return productService.searchBy(name);
     }
 }
