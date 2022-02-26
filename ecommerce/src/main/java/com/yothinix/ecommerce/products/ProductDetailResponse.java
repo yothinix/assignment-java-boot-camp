@@ -1,5 +1,7 @@
 package com.yothinix.ecommerce.products;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.yothinix.ecommerce.products.entity.Product;
 import com.yothinix.ecommerce.products.entity.ProductImage;
 import com.yothinix.ecommerce.products.entity.ProductReview;
@@ -15,6 +17,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ProductDetailResponse extends Product {
     private List<ProductImage> productImage;
     private List<ProductVariant> productVariant;
