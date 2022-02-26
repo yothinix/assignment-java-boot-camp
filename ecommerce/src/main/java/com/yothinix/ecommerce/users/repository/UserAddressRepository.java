@@ -1,4 +1,4 @@
-package com.yothinix.ecommerce.users;
+package com.yothinix.ecommerce.users.repository;
 
 import com.yothinix.ecommerce.users.entity.UserAddress;
 import org.springframework.data.jpa.repository.JpaRepository;
