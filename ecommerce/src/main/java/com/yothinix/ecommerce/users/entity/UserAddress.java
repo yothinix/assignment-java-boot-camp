@@ -1,4 +1,4 @@
-package com.yothinix.ecommerce.users;
+package com.yothinix.ecommerce.users.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

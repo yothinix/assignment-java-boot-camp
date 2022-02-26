@@ -1,5 +1,6 @@
 package com.yothinix.ecommerce.users;
 
+import com.yothinix.ecommerce.users.entity.UserAddress;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
