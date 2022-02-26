@@ -1,4 +1,4 @@
-package com.yothinix.ecommerce.products;
+package com.yothinix.ecommerce.products.repository;
 
 import com.yothinix.ecommerce.products.entity.Product;
 import com.yothinix.ecommerce.products.repository.ProductRepository;
