@@ -8,6 +8,8 @@ import com.yothinix.ecommerce.products.repository.ProductImageRepository;
 import com.yothinix.ecommerce.products.repository.ProductRepository;
 import com.yothinix.ecommerce.products.repository.ProductReviewRepository;
 import com.yothinix.ecommerce.products.repository.ProductVariantRepository;
+import com.yothinix.ecommerce.users.entity.User;
+import com.yothinix.ecommerce.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,19 +20,25 @@ import javax.annotation.PostConstruct;
 public class EcommerceApplication {
 
 	@Autowired
-	ProductRepository productRepository;
+	private UserRepository userRepository;
 
 	@Autowired
-	ProductImageRepository productImageRepository;
+	private ProductRepository productRepository;
 
 	@Autowired
-	ProductVariantRepository productVariantRepository;
+	private ProductImageRepository productImageRepository;
 
 	@Autowired
-	ProductReviewRepository productReviewRepository;
+	private ProductVariantRepository productVariantRepository;
+
+	@Autowired
+	private ProductReviewRepository productReviewRepository;
 
 	@PostConstruct
 	public void initialData() {
+		User user = new User(100, "human");
+		userRepository.save(user);
+
 		Product product = new Product();
 		product.setId(100);
 		product.setName("Nike AirJordan");
