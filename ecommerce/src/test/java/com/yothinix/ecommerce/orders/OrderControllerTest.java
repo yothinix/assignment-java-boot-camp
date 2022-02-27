@@ -1,5 +1,7 @@
 package com.yothinix.ecommerce.orders;
 
+import com.yothinix.ecommerce.exceptions.OrderNotFoundException;
+import com.yothinix.ecommerce.exceptions.OrderRequestInvalidException;
 import com.yothinix.ecommerce.orders.entity.Order;
 import com.yothinix.ecommerce.orders.entity.OrderItem;
 import com.yothinix.ecommerce.orders.repository.OrderItemRepository;
@@ -13,6 +15,7 @@ import com.yothinix.ecommerce.users.entity.UserAddress;
 import com.yothinix.ecommerce.users.repository.UserAddressRepository;
 import com.yothinix.ecommerce.users.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +60,11 @@ class OrderControllerTest {
 
     @MockBean
     private UserAddressRepository userAddressRepository;
+
+    @BeforeEach
+    void setUp() {
+        testRestTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+    }
 
     @Test
     void createOrderSuccessTest() {
@@ -146,5 +158,90 @@ class OrderControllerTest {
         ResponseEntity<OrderResponse> actual = testRestTemplate.getForEntity("/orders/1", OrderResponse.class);
 
         assertEquals(HttpStatus.NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    void orderUpdateSuccessTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        Payment payment = new Payment();
+        payment.setId(2);
+        when(paymentRepository.findById(2)).thenReturn(Optional.of(payment));
+
+        UserAddress userAddress = new UserAddress();
+        userAddress.setId(3);
+        when(userAddressRepository.findById(3)).thenReturn(Optional.of(userAddress));
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+        request.setShippingId(3);
+
+        OrderResponse actual = testRestTemplate.patchForObject("/orders/1", request, OrderResponse.class);
+
+        assertEquals(1, actual.getId());
+        assertEquals(2, actual.getPayment().getId());
+        assertEquals(3, actual.getShipping().getId());
+    }
+
+    @Test
+    void orderUpdateShouldThrowOrderNotFoundWhenOrderIdNotMatchTest() {
+        when(orderRepository.findById(1)).thenReturn(Optional.empty());
+
+        OrderUpdateRequest order = new OrderUpdateRequest();
+        order.setId(1);
+        order.setPaymentId(2);
+        order.setShippingId(3);
+        HttpEntity<OrderUpdateRequest> request = new HttpEntity<>(order);
+
+        ResponseEntity<OrderResponse> actual = testRestTemplate.exchange("/orders/1", HttpMethod.PATCH, request, OrderResponse.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, actual.getStatusCode());
+    }
+
+    @Test
+    void orderUpdateShouldThrowRequestInvalidWhenPaymentNotFoundTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        when(paymentRepository.findById(2)).thenReturn(Optional.empty());
+
+        OrderUpdateRequest orderRequest = new OrderUpdateRequest();
+        orderRequest.setId(1);
+        orderRequest.setPaymentId(2);
+        orderRequest.setShippingId(3);
+        HttpEntity<OrderUpdateRequest> request = new HttpEntity<>(orderRequest);
+
+        ResponseEntity<OrderResponse> actual = testRestTemplate.exchange("/orders/1", HttpMethod.PATCH, request, OrderResponse.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, actual.getStatusCode());
+    }
+
+    @Test
+    void orderUpdateShouldThrowRequestInvalidWhenUserAddressNotFoundTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        Payment payment = new Payment();
+        payment.setId(2);
+        when(paymentRepository.findById(2)).thenReturn(Optional.of(payment));
+
+        UserAddress userAddress = new UserAddress();
+        userAddress.setId(3);
+        when(userAddressRepository.findById(3)).thenReturn(Optional.empty());
+
+        OrderUpdateRequest orderRequest = new OrderUpdateRequest();
+        orderRequest.setId(1);
+        orderRequest.setPaymentId(2);
+        orderRequest.setShippingId(3);
+        HttpEntity<OrderUpdateRequest> request = new HttpEntity<>(orderRequest);
+
+        ResponseEntity<OrderResponse> actual = testRestTemplate.exchange("/orders/1", HttpMethod.PATCH, request, OrderResponse.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, actual.getStatusCode());
     }
 }

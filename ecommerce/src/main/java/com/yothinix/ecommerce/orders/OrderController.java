@@ -18,4 +18,9 @@ public class OrderController {
     public OrderResponse orderDetail(@PathVariable("id") Integer orderId) {
         return orderService.get(orderId);
     }
+
+    @PatchMapping("/orders/{id}")
+    public OrderResponse updateOrder(@PathVariable("id") Integer id, @RequestBody OrderUpdateRequest request) {
+        return orderService.update(id, request);
+    }
 }
