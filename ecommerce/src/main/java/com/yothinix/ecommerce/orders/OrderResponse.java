@@ -1,5 +1,6 @@
 package com.yothinix.ecommerce.orders;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.yothinix.ecommerce.orders.entity.Order;
@@ -19,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonIgnoreProperties(value = {"user_id", "payment_id", "shipping_id"})
 public class OrderResponse extends Order {
     private User user;
     private Payment payment;

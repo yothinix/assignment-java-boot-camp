@@ -20,10 +20,8 @@ public class Order {
     @GeneratedValue
     private Integer id;
 
-    @JsonIgnoreProperties
     private Integer userId;
 
-    @JsonIgnoreProperties
     private Integer paymentId;
 
     @JsonIgnoreProperties

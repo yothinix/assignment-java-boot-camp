@@ -5,3 +5,7 @@ Content-Type: application/json
     "user_id": 100,
     "product_id": 100
 }
+
+###
+
+GET http://localhost:8000/orders/1
