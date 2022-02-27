@@ -92,10 +92,10 @@ public class OrderService {
         return getOrderResponse(optionalOrder.get());
     }
 
-    public OrderResponse update(OrderUpdateRequest request) {
-        Optional<Order> optionalOrder = orderRepository.findById(request.getId());
+    public OrderResponse update(Integer id, OrderUpdateRequest request) {
+        Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isEmpty()) {
-            throw new OrderNotFoundException(String.format(notFoundTemplate, "Order", request.getId()));
+            throw new OrderNotFoundException(String.format(notFoundTemplate, "Order", id));
         }
         Order order = optionalOrder.get();
 

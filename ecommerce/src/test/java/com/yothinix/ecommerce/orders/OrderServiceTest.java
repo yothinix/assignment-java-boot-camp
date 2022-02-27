@@ -161,7 +161,7 @@ class OrderServiceTest {
         request.setPaymentId(2);
         request.setShippingId(3);
 
-        OrderResponse actual = orderService.update(request);
+        OrderResponse actual = orderService.update(1, request);
 
         assertEquals(1, actual.getId());
         assertEquals(2, actual.getPayment().getId());
@@ -178,7 +178,7 @@ class OrderServiceTest {
         request.setPaymentId(2);
         request.setShippingId(3);
 
-        assertThrows(OrderNotFoundException.class, () -> orderService.update(request));
+        assertThrows(OrderNotFoundException.class, () -> orderService.update(1, request));
     }
 
     @Test
@@ -194,7 +194,7 @@ class OrderServiceTest {
         request.setPaymentId(2);
         request.setShippingId(3);
 
-        assertThrows(OrderRequestInvalidException.class, () -> orderService.update(request));
+        assertThrows(OrderRequestInvalidException.class, () -> orderService.update(1, request));
     }
 
     @Test
@@ -216,6 +216,6 @@ class OrderServiceTest {
         request.setPaymentId(2);
         request.setShippingId(3);
 
-        assertThrows(OrderRequestInvalidException.class, () -> orderService.update(request));
+        assertThrows(OrderRequestInvalidException.class, () -> orderService.update(1, request));
     }
 }
