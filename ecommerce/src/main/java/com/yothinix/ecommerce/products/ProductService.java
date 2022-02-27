@@ -16,16 +16,16 @@ import java.util.Optional;
 public class ProductService {
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @Autowired
-    ProductImageRepository productImageRepository;
+    private ProductImageRepository productImageRepository;
 
     @Autowired
-    ProductVariantRepository productVariantRepository;
+    private ProductVariantRepository productVariantRepository;
 
     @Autowired
-    ProductReviewRepository productReviewRepository;
+    private ProductReviewRepository productReviewRepository;
 
     public ProductListResponse searchBy(String name) {
         List<Product> products = productRepository.findProductByNameContains(name);
