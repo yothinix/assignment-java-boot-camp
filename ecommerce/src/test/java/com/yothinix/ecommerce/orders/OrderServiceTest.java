@@ -1,12 +1,15 @@
 package com.yothinix.ecommerce.orders;
 
 import com.yothinix.ecommerce.exceptions.OrderNotFoundException;
+import com.yothinix.ecommerce.exceptions.OrderProcessingException;
 import com.yothinix.ecommerce.exceptions.OrderRequestInvalidException;
 import com.yothinix.ecommerce.orders.entity.Order;
 import com.yothinix.ecommerce.orders.entity.OrderItem;
 import com.yothinix.ecommerce.orders.repository.OrderItemRepository;
 import com.yothinix.ecommerce.orders.repository.OrderRepository;
+import com.yothinix.ecommerce.payments.ChargeResponse;
 import com.yothinix.ecommerce.payments.Payment;
+import com.yothinix.ecommerce.payments.PaymentGatewayService;
 import com.yothinix.ecommerce.payments.PaymentRepository;
 import com.yothinix.ecommerce.products.entity.Product;
 import com.yothinix.ecommerce.products.repository.ProductRepository;
@@ -47,6 +50,9 @@ class OrderServiceTest {
 
     @Mock
     UserAddressRepository userAddressRepository;
+
+    @Mock
+    PaymentGatewayService paymentGatewayService;
 
     @InjectMocks
     OrderService orderService;
@@ -217,5 +223,96 @@ class OrderServiceTest {
         request.setShippingId(3);
 
         assertThrows(OrderRequestInvalidException.class, () -> orderService.update(1, request));
+    }
+
+    @Test
+    void checkoutSuccessTest() {
+        Order order = new Order();
+        order.setId(1);
+        order.setPaymentId(2);
+        order.setOrderStatus("paid");
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        Payment payment = new Payment();
+        payment.setId(2);
+        when(paymentRepository.findById(2)).thenReturn(Optional.of(payment));
+
+        when(orderRepository.save(Mockito.any())).thenReturn(order);
+
+        ChargeResponse chargeResult = new ChargeResponse("0000", "success", "transaction-id");
+        when(paymentGatewayService.charge(Mockito.any(), Mockito.anyString())).thenReturn(chargeResult);
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+
+        OrderResponse actual = orderService.checkout(request);
+
+        assertEquals(1, actual.getId());
+        assertEquals(2, actual.getPaymentId());
+        assertEquals("paid", actual.getOrderStatus());
+    }
+
+    @Test
+    void checkoutFailedOrderNotFoundTest() {
+        when(orderRepository.findById(1)).thenReturn(Optional.empty());
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+
+        assertThrows(OrderNotFoundException.class, () -> orderService.checkout(request));
+    }
+
+    @Test
+    void checkoutFailedPaymentIdNotPresentTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(null);
+
+        assertThrows(OrderRequestInvalidException.class, () -> orderService.checkout(request));
+    }
+
+    @Test
+    void checkoutFailedPaymentNotFoundTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        when(paymentRepository.findById(2)).thenReturn(Optional.empty());
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+
+        assertThrows(OrderRequestInvalidException.class, () -> orderService.checkout(request));
+    }
+
+    @Test
+    void checkoutFailedChangeToPaymentGatewayTest() {
+        Order order = new Order();
+        order.setId(1);
+        order.setPaymentId(2);
+        order.setOrderStatus("paid");
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        Payment payment = new Payment();
+        payment.setId(2);
+        when(paymentRepository.findById(2)).thenReturn(Optional.of(payment));
+
+        when(orderRepository.save(Mockito.any())).thenReturn(order);
+
+        ChargeResponse chargeResult = new ChargeResponse("0001", "error", "transaction-id");
+        when(paymentGatewayService.charge(Mockito.any(), Mockito.anyString())).thenReturn(chargeResult);
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+
+        assertThrows(OrderProcessingException.class, () -> orderService.checkout(request));
     }
 }

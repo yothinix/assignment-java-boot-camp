@@ -1,12 +1,15 @@
 package com.yothinix.ecommerce.orders;
 
 import com.yothinix.ecommerce.exceptions.OrderNotFoundException;
+import com.yothinix.ecommerce.exceptions.OrderProcessingException;
 import com.yothinix.ecommerce.exceptions.OrderRequestInvalidException;
 import com.yothinix.ecommerce.orders.entity.Order;
 import com.yothinix.ecommerce.orders.entity.OrderItem;
 import com.yothinix.ecommerce.orders.repository.OrderItemRepository;
 import com.yothinix.ecommerce.orders.repository.OrderRepository;
+import com.yothinix.ecommerce.payments.ChargeResponse;
 import com.yothinix.ecommerce.payments.Payment;
+import com.yothinix.ecommerce.payments.PaymentGatewayService;
 import com.yothinix.ecommerce.payments.PaymentRepository;
 import com.yothinix.ecommerce.products.entity.Product;
 import com.yothinix.ecommerce.products.repository.ProductRepository;
@@ -25,6 +28,8 @@ import java.util.Optional;
 @Service
 public class OrderService {
     private String notFoundTemplate = "%s id: %s is not found";
+    private String orderName = "Order";
+    private String paymentName = "Payment";
 
     @Autowired
     private ProductRepository productRepository;
@@ -43,6 +48,9 @@ public class OrderService {
 
     @Autowired
     private UserAddressRepository userAddressRepository;
+
+    @Autowired
+    private PaymentGatewayService paymentGatewayService;
 
     @Transactional
     public OrderResponse create(OrderRequest orderRequest) {
@@ -86,7 +94,7 @@ public class OrderService {
         Optional<Order> optionalOrder = orderRepository.findById(orderId);
 
         if (optionalOrder.isEmpty()) {
-            throw new OrderNotFoundException(String.format(notFoundTemplate, "Order", orderId));
+            throw new OrderNotFoundException(String.format(notFoundTemplate, orderName, orderId));
         }
 
         return getOrderResponse(optionalOrder.get());
@@ -95,14 +103,14 @@ public class OrderService {
     public OrderResponse update(Integer id, OrderUpdateRequest request) {
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if (optionalOrder.isEmpty()) {
-            throw new OrderNotFoundException(String.format(notFoundTemplate, "Order", id));
+            throw new OrderNotFoundException(String.format(notFoundTemplate, orderName, id));
         }
         Order order = optionalOrder.get();
 
         if (request.getPaymentId() != null) {
             Optional<Payment> optionalPayment = paymentRepository.findById(request.getPaymentId());
             if (optionalPayment.isEmpty()) {
-                throw new OrderRequestInvalidException(String.format(notFoundTemplate, "Payment", request.getPaymentId()));
+                throw new OrderRequestInvalidException(String.format(notFoundTemplate, paymentName, request.getPaymentId()));
             }
             Payment payment = optionalPayment.get();
             order.setPaymentId(payment.getId());
@@ -118,6 +126,38 @@ public class OrderService {
         }
 
         return getOrderResponse(order);
+    }
+
+    @Transactional
+    public OrderResponse checkout(OrderUpdateRequest request) {
+        Optional<Order> optionalOrder = orderRepository.findById(request.getId());
+        if (optionalOrder.isEmpty()) {
+            throw new OrderNotFoundException(String.format(notFoundTemplate, orderName, request.getId()));
+        }
+        Order order = optionalOrder.get();
+
+        if (request.getPaymentId() == null) {
+            throw new OrderRequestInvalidException(String.format(notFoundTemplate, paymentName, request.getPaymentId()));
+        }
+
+        Optional<Payment> optionalPayment = paymentRepository.findById(request.getPaymentId());
+        if (optionalPayment.isEmpty()) {
+            throw new OrderRequestInvalidException(String.format(notFoundTemplate, paymentName, request.getPaymentId()));
+        }
+        Payment payment = optionalPayment.get();
+
+        order.setPaymentId(payment.getId());
+        Order orderWithPayment = orderRepository.save(order);
+
+        ChargeResponse chargeResult = paymentGatewayService.charge(payment, "Lazada");
+        if (!chargeResult.getStatusCode().equals("0000")) {
+            throw new OrderProcessingException("Failed to process order id: " + order.getId());
+        }
+
+        orderWithPayment.setOrderStatus("paid");
+        Order paidOrder = orderRepository.save(orderWithPayment);
+
+        return getOrderResponse(paidOrder);
     }
 
     private OrderResponse getOrderResponse(Order order) {
