@@ -36,7 +36,7 @@ class OrderRepositoryTest {
         Optional<Order> orderOptional = orderRepository.findById(newOrder.getId());
         Order actual = orderOptional.get();
 
-        assertEquals(1, actual.getId());
+        assertNotNull(actual.getId());
         assertEquals(2, actual.getUserId());
         assertEquals(3, actual.getPaymentId());
         assertEquals(4, actual.getShippingId());
