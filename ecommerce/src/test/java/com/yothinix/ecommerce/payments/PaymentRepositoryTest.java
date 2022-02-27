@@ -20,8 +20,14 @@ class PaymentRepositoryTest {
 
     @Test
     void findByIdShouldReturnPaymentTest() {
-        Payment payment = new Payment(1, 1, "credit", "1111222233334444", "HuMan test", "0222", "123");
-        testEntityManager.persist(payment);
+        Payment payment = new Payment();
+        payment.setUserId(1);
+        payment.setMethod("credit");
+        payment.setNumber("1111222233334444");
+        payment.setName("HuMan test");
+        payment.setPaymentExpiryDate("0222");
+        payment.setSecureCode("123");
+        paymentRepository.save(payment);
 
         Optional<Payment> paymentOptional = paymentRepository.findById(1);
         Payment actual = paymentOptional.get();

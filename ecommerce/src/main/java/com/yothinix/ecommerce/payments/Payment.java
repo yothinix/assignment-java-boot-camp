@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Getter
@@ -15,6 +16,7 @@ import javax.persistence.Id;
 @Entity
 public class Payment {
     @Id
+    @GeneratedValue
     private Integer id;
     private Integer userId;
     private String method;
