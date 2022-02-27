@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 @Getter
@@ -19,7 +16,7 @@ import java.util.Date;
 @Entity
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
     @JsonIgnoreProperties
@@ -32,8 +29,13 @@ public class Order {
     private Integer shippingId;
 
     private Double totalAmount;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date transactionDate;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date expiredDate;
+
     private String orderStatus;
 
 }

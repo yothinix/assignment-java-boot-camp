@@ -22,8 +22,16 @@ class OrderItemRepositoryTest {
 
     @Test
     void findOrderItemByOrderIdFoundOrderItemTest() {
-        OrderItem orderItem1 = new OrderItem(1, 1, 1, Double.valueOf("399.0"), Double.valueOf("399.0"));
-        OrderItem orderItem2 = new OrderItem(2, 2, 2, Double.valueOf("500.0"), Double.valueOf("500.0"));
+        OrderItem orderItem1 = new OrderItem();
+        orderItem1.setOrderId(1);
+        orderItem1.setProductId(1);
+        orderItem1.setAmount(Double.valueOf("399.0"));
+        orderItem1.setPaymentPrice(Double.valueOf("399.0"));
+        OrderItem orderItem2 = new OrderItem();
+        orderItem2.setOrderId(2);
+        orderItem2.setProductId(2);
+        orderItem2.setAmount(Double.valueOf("500.0"));
+        orderItem2.setPaymentPrice(Double.valueOf("500.0"));
         testEntityManager.persist(orderItem1);
         testEntityManager.persist(orderItem2);
 

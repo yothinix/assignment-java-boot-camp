@@ -24,7 +24,6 @@ class OrderRepositoryTest {
     @Test
     void findByIdShouldReturnOrderTest() {
         Order order = new Order();
-        order.setId(1);
         order.setUserId(2);
         order.setPaymentId(3);
         order.setShippingId(4);
