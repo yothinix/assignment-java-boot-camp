@@ -23,4 +23,9 @@ public class OrderController {
     public OrderResponse updateOrder(@PathVariable("id") Integer id, @RequestBody OrderUpdateRequest request) {
         return orderService.update(id, request);
     }
+
+    @PostMapping("/checkout")
+    public OrderResponse checkout(@RequestBody OrderUpdateRequest request) {
+        return orderService.checkout(request);
+    }
 }
