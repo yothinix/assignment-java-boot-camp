@@ -1,13 +1,18 @@
 package com.yothinix.ecommerce.orders;
 
+import com.yothinix.ecommerce.exceptions.OrderNotFoundException;
 import com.yothinix.ecommerce.exceptions.OrderRequestInvalidException;
 import com.yothinix.ecommerce.orders.entity.Order;
 import com.yothinix.ecommerce.orders.entity.OrderItem;
 import com.yothinix.ecommerce.orders.repository.OrderItemRepository;
 import com.yothinix.ecommerce.orders.repository.OrderRepository;
+import com.yothinix.ecommerce.payments.Payment;
+import com.yothinix.ecommerce.payments.PaymentRepository;
 import com.yothinix.ecommerce.products.entity.Product;
 import com.yothinix.ecommerce.products.repository.ProductRepository;
 import com.yothinix.ecommerce.users.entity.User;
+import com.yothinix.ecommerce.users.entity.UserAddress;
+import com.yothinix.ecommerce.users.repository.UserAddressRepository;
 import com.yothinix.ecommerce.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +24,7 @@ import java.util.Optional;
 
 @Service
 public class OrderService {
+    private String notFoundTemplate = "%s id: %s is not found";
 
     @Autowired
     private ProductRepository productRepository;
@@ -32,17 +38,23 @@ public class OrderService {
     @Autowired
     private OrderItemRepository orderItemRepository;
 
+    @Autowired
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+    private UserAddressRepository userAddressRepository;
+
     @Transactional
     public OrderResponse create(OrderRequest orderRequest) {
         Optional<Product> optionalProduct = productRepository.findById(orderRequest.getProductId());
         if (optionalProduct.isEmpty()) {
-            throw new OrderRequestInvalidException("Product id: " + orderRequest.getProductId() + " is not found");
+            throw new OrderRequestInvalidException(String.format(notFoundTemplate, "Product", orderRequest.getProductId()));
         }
         Product product = optionalProduct.get();
 
         Optional<User> optionalUser = userRepository.findById(orderRequest.getUserId());
         if (optionalUser.isEmpty()) {
-            throw new OrderRequestInvalidException("User id: " + orderRequest.getUserId() + " is not found");
+            throw new OrderRequestInvalidException(String.format(notFoundTemplate, "User", orderRequest.getUserId()));
         }
         User user = optionalUser.get();
 
@@ -65,6 +77,37 @@ public class OrderService {
 
         OrderResponse orderResponse = new OrderResponse(order);
         orderResponse.setUser(user);
+        orderResponse.setOrderItems(orderItems);
+
+        return orderResponse;
+    }
+
+    public OrderResponse get(Integer orderId) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+
+        if (optionalOrder.isEmpty()) {
+            throw new OrderNotFoundException(String.format(notFoundTemplate, "Order", orderId));
+        }
+        Order order = optionalOrder.get();
+
+        OrderResponse orderResponse = new OrderResponse(order);
+
+        if (order.getUserId() != null) {
+            Optional<User> optionalUser = userRepository.findById(order.getUserId());
+            optionalUser.ifPresent(orderResponse::setUser);
+        }
+
+        if (order.getPaymentId() != null) {
+            Optional<Payment> optionalPayment = paymentRepository.findById(order.getPaymentId());
+            optionalPayment.ifPresent(orderResponse::setPayment);
+        }
+
+        if (order.getShippingId() != null) {
+            Optional<UserAddress> optionalShipping = userAddressRepository.findById(order.getShippingId());
+            optionalShipping.ifPresent(orderResponse::setShipping);
+        }
+
+        List<OrderItem> orderItems = orderItemRepository.findOrderItemByOrderId(orderId);
         orderResponse.setOrderItems(orderItems);
 
         return orderResponse;
