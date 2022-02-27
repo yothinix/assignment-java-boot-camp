@@ -22,7 +22,6 @@ class UserAddressRepositoryTest {
     @Test
     void findByIdShouldReturnUserAddressTest() {
         UserAddress userAddress = new UserAddress();
-        userAddress.setId(1);
         userAddress.setUserId(1);
         userAddress.setEmail("email@email.com");
         userAddress.setName("Human test");
@@ -36,7 +35,7 @@ class UserAddressRepositoryTest {
         Optional<UserAddress> userAddressOptional = userAddressRepository.findById(1);
         UserAddress actual = userAddressOptional.get();
 
-        assertEquals(1, actual.getId());
+        assertNotNull(actual.getId());
         assertEquals(1, actual.getUserId());
         assertEquals("email@email.com", actual.getEmail());
         assertEquals("Human test", actual.getName());

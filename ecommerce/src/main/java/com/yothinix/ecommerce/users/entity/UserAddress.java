@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Getter
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserAddress {
     @Id
+    @GeneratedValue
     private Integer id;
     private Integer userId;
     private String email;
