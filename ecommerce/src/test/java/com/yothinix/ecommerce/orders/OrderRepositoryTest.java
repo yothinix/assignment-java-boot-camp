@@ -31,9 +31,9 @@ class OrderRepositoryTest {
         order.setTransactionDate(new Date());
         order.setExpiredDate(new Date());
         order.setOrderStatus("pending");
-        testEntityManager.persist(order);
+        Order newOrder = orderRepository.save(order);
 
-        Optional<Order> orderOptional = orderRepository.findById(1);
+        Optional<Order> orderOptional = orderRepository.findById(newOrder.getId());
         Order actual = orderOptional.get();
 
         assertEquals(1, actual.getId());
