@@ -1,0 +1,11 @@
+POST http://localhost:8000/payments
+Content-Type: application/json
+
+{
+    "user_id": 1,
+    "method": "credit",
+    "number": "1111222233334444",
+    "name": "Human card",
+    "payment_expiry_date": "0122",
+    "secure_code": "123"
+}
