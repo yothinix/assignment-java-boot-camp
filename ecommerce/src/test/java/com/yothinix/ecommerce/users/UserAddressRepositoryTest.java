@@ -30,9 +30,9 @@ class UserAddressRepositoryTest {
         userAddress.setDistrict("Chatuchak");
         userAddress.setProvince("Bangkok");
         userAddress.setTelephone("0812345678");
-        testEntityManager.persist(userAddress);
+        UserAddress newUserAddress = userAddressRepository.save(userAddress);
 
-        Optional<UserAddress> userAddressOptional = userAddressRepository.findById(1);
+        Optional<UserAddress> userAddressOptional = userAddressRepository.findById(newUserAddress.getId());
         UserAddress actual = userAddressOptional.get();
 
         assertNotNull(actual.getId());
