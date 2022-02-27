@@ -27,12 +27,12 @@ class PaymentRepositoryTest {
         payment.setName("HuMan test");
         payment.setPaymentExpiryDate("0222");
         payment.setSecureCode("123");
-        paymentRepository.save(payment);
+        Payment newPayment = paymentRepository.save(payment);
 
-        Optional<Payment> paymentOptional = paymentRepository.findById(1);
+        Optional<Payment> paymentOptional = paymentRepository.findById(newPayment.getId());
         Payment actual = paymentOptional.get();
 
-        assertEquals(1, actual.getId());
+        assertNotNull(actual.getId());
         assertEquals("HuMan test", actual.getName());
     }
 
