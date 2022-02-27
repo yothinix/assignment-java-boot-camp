@@ -141,4 +141,81 @@ class OrderServiceTest {
         when(orderRepository.findById(1)).thenReturn(Optional.empty());
         assertThrows(OrderNotFoundException.class, () -> orderService.get(1));
     }
+
+    @Test
+    void orderUpdateSuccessTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        Payment payment = new Payment();
+        payment.setId(2);
+        when(paymentRepository.findById(2)).thenReturn(Optional.of(payment));
+
+        UserAddress userAddress = new UserAddress();
+        userAddress.setId(3);
+        when(userAddressRepository.findById(3)).thenReturn(Optional.of(userAddress));
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+        request.setShippingId(3);
+
+        OrderResponse actual = orderService.update(request);
+
+        assertEquals(1, actual.getId());
+        assertEquals(2, actual.getPayment().getId());
+        assertEquals(3, actual.getShipping().getId());
+    }
+
+    @Test
+    void orderUpdateShouldThrowOrderNotFoundWhenOrderIdNotMatchTest() {
+        when(orderRepository.findById(1)).thenReturn(Optional.empty());
+
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+        request.setShippingId(3);
+
+        assertThrows(OrderNotFoundException.class, () -> orderService.update(request));
+    }
+
+    @Test
+    void orderUpdateShouldThrowRequestInvalidWhenPaymentNotFoundTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        when(paymentRepository.findById(2)).thenReturn(Optional.empty());
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+        request.setShippingId(3);
+
+        assertThrows(OrderRequestInvalidException.class, () -> orderService.update(request));
+    }
+
+    @Test
+    void orderUpdateShouldThrowRequestInvalidWhenUserAddressNotFoundTest() {
+        Order order = new Order();
+        order.setId(1);
+        when(orderRepository.findById(1)).thenReturn(Optional.of(order));
+
+        Payment payment = new Payment();
+        payment.setId(2);
+        when(paymentRepository.findById(2)).thenReturn(Optional.of(payment));
+
+        UserAddress userAddress = new UserAddress();
+        userAddress.setId(3);
+        when(userAddressRepository.findById(3)).thenReturn(Optional.empty());
+
+        OrderUpdateRequest request = new OrderUpdateRequest();
+        request.setId(1);
+        request.setPaymentId(2);
+        request.setShippingId(3);
+
+        assertThrows(OrderRequestInvalidException.class, () -> orderService.update(request));
+    }
 }

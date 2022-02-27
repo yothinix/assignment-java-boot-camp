@@ -88,8 +88,39 @@ public class OrderService {
         if (optionalOrder.isEmpty()) {
             throw new OrderNotFoundException(String.format(notFoundTemplate, "Order", orderId));
         }
+
+        return getOrderResponse(optionalOrder.get());
+    }
+
+    public OrderResponse update(OrderUpdateRequest request) {
+        Optional<Order> optionalOrder = orderRepository.findById(request.getId());
+        if (optionalOrder.isEmpty()) {
+            throw new OrderNotFoundException(String.format(notFoundTemplate, "Order", request.getId()));
+        }
         Order order = optionalOrder.get();
 
+        if (request.getPaymentId() != null) {
+            Optional<Payment> optionalPayment = paymentRepository.findById(request.getPaymentId());
+            if (optionalPayment.isEmpty()) {
+                throw new OrderRequestInvalidException(String.format(notFoundTemplate, "Payment", request.getPaymentId()));
+            }
+            Payment payment = optionalPayment.get();
+            order.setPaymentId(payment.getId());
+        }
+
+        if (request.getShippingId() != null) {
+            Optional<UserAddress> optionalShipping = userAddressRepository.findById(request.getShippingId());
+            if (optionalShipping.isEmpty()) {
+                throw new OrderRequestInvalidException(String.format(notFoundTemplate, "UserAddress", request.getShippingId()));
+            }
+            UserAddress shipping = optionalShipping.get();
+            order.setShippingId(shipping.getId());
+        }
+
+        return getOrderResponse(order);
+    }
+
+    private OrderResponse getOrderResponse(Order order) {
         OrderResponse orderResponse = new OrderResponse(order);
 
         if (order.getUserId() != null) {
@@ -107,9 +138,8 @@ public class OrderService {
             optionalShipping.ifPresent(orderResponse::setShipping);
         }
 
-        List<OrderItem> orderItems = orderItemRepository.findOrderItemByOrderId(orderId);
+        List<OrderItem> orderItems = orderItemRepository.findOrderItemByOrderId(order.getId());
         orderResponse.setOrderItems(orderItems);
-
         return orderResponse;
     }
 }
